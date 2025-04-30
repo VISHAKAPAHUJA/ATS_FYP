@@ -1,0 +1,224 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Background with Black & Blue Gradient */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #000, #007BFF);
+}
+
+/* Container with Glassmorphism Effect */
+.container {
+    display: flex;
+    width: 85%;
+    max-width: 1000px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+/* Left Section - Image */
+.image-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 30px;
+}
+
+.image-section img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+}
+
+/* Right Section - Login Form */
+.login-section {
+    flex: 1;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+h2 {
+    font-size: 32px;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+/* Form Styling */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+}
+
+label {
+    font-size: 14px;
+    color: #fff;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    outline: none;
+    transition: 0.3s ease;
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+    color: #333;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    background: rgba(255, 255, 255, 1);
+}
+
+/* Remember Me & Forgot Password */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #fff;
+}
+
+.form-options a {
+    color: #fff;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.form-options a:hover {
+    text-decoration: underline;
+}
+
+/* Login Button */
+.login-btn {
+    padding: 12px;
+    font-size: 18px;
+    background: linear-gradient(90deg, #000, #007BFF);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.login-btn:hover {
+    background: linear-gradient(90deg, #007BFF, #000);
+}
+
+/* Register Link */
+.register-text {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #fff;
+}
+
+.register-text a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.register-text a:hover {
+    text-decoration: underline;
+}
+
+/* Store Buttons */
+.store-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.store-buttons button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.store-buttons button:hover {
+    background: rgba(255, 255, 255, 1);
+}
+/* Notification Styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transform: translateX(150%);
+    transition: transform 0.3s ease-out;
+    cursor: pointer;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #28a745, #218838);
+}
+
+.notification.error {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.notification.info {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .image-section {
+        display: none;
+    }
+
+    .login-section {
+        padding: 30px;
+    }
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar Overlap Example</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="user-info">
+            <img src="../../utility/profile.png" alt="User Profile">
+            <div class="user-details">
+                <h3>Vishaka Pahuja</h3>
+                <p>CNIC: 43103-1996539-0</p>
+                <p>Mobile No: 923323201622</p>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search...">
+        </div>
+        <ul class="menu">
+            <li class="menu-item active">
+                <i class="fas fa-home"></i>
+                <a href="/WEB/home/homee.html" class="item-text">Home</a>
+            </li>
+            <li class="menu-item">
+                <i class="fas fa-user"></i>
+                <a href="/WEB/Profile/profile.html" class="item-text">My Profile</a>
+            </li>
+            <li class="menu-item">
+                <i class="fas fa-file-alt"></i>
+                <a href="/WEB/applied/applied.html" class="item-text">Applied Applications</a>
+            </li>
+            <li class="menu-item">
+                <i class="fas fa-briefcase"></i>
+                <a href="/WEB/Jobs/job.html" class="item-text">Jobs</a>
+            </li>
+            <li class="menu-item">
+                <i class="fas fa-question-circle"></i>
+                <a href="/WEB/apply/apply.html" class="item-text">How to Apply</a>
+            </li>
+            <li class="menu-item">
+                <i class="fas fa-info-circle"></i>
+                <a href="/WEB/about/index.html" class="item-text">About</a>
+            </li>
+        </ul>
+        <div class="notifications">
+            <p>No new notifications</p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle active state for menu items
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active class from the currently active item
+                document.querySelector('.menu-item.active')?.classList.remove('active');
+                // Add active class to the clicked item
+                item.classList.add('active');
+
+            });
+        });
+
+
+    </script>
+
+</body>
+
+</html>

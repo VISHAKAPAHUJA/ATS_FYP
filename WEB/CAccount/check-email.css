@@ -1,0 +1,46 @@
+/* Loading button state */
+.create-account-btn.loading {
+    opacity: 0.7;
+    position: relative;
+    pointer-events: none;
+}
+
+.create-account-btn.loading::after {
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Verification message styles */
+.verification-message {
+    display: none;
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.verification-message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.verification-message.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}

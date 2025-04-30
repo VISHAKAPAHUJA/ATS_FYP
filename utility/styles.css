@@ -1,0 +1,136 @@
+.sidebar {
+    background-color: #333;
+    color: #fff;
+    width: 70px;
+    padding: 20px 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: 1000;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+}
+
+.sidebar:hover {
+    width: 250px;
+}
+
+.user-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.user-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.user-details {
+    display: none;
+    margin-top: 10px;
+}
+
+.sidebar:hover .user-details {
+    display: block;
+    text-align: center;
+}
+
+.user-details h3,
+.user-details p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #ddd;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 0 20px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.search-bar input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.menu {
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Aligns items to the start */
+    padding: 15px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px solid #444;
+    color: #ddd;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.menu-item:hover {
+    background-color: #444;
+    font-weight: bold;
+}
+
+.menu-item.active {
+    background-color: #444;
+    font-weight: bold;
+}
+
+/* Ensure icons are aligned consistently before and after hover */
+.menu-item i {
+    font-size: 20px;
+    min-width: 30px;  /* Fixed width for icons to align consistently */
+    text-align: center;
+    margin-right: 15px;  /* Fixed spacing between icon and text */
+}
+
+.menu-item a {
+    display: inline-block;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    text-decoration: none;
+    color: white;
+}
+
+.sidebar:hover .menu-item a {
+    opacity: 1;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 70px;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar:hover ~ .main-content {
+    margin-left: 250px;
+}
+
+
+.notifications {
+    padding: 10px;
+    background-color: #222;
+    color: #fff;
+    margin-top: 20px;
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Profile Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../../utility/styles.css">
+</head>
+<body>
+    <!-- Sidebar container -->
+    <div id="sidebar-container"></div>
+    <div class="main-content"></div>
+        <div class="form-container">
+            <div class="header-container">
+                <div class="profile-section">
+                    <img src="https://via.placeholder.com/100" alt="Profile Photo" class="profile-image">
+                    <div class="profile-details">
+                        <h2 class="full-name">Full Name: </h2>
+                        <h4 class="mobile-number">Mobile Number: </h4>
+                        <h4 class="email-address">Email Address: </h4>
+                    </div>                              
+                </div>
+                <div class="profile-buttons">
+                    <button class="upload-btn">Upload</button>
+                    <button class="remove-btn">Remove Photo</button>
+                </div>
+            </div>                      
+            <form>
+                <div class="form-group-half">
+                    <div class="form-group">
+                        <label for="firstName" aria-label="Enter your first name">First Name</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="e.g., John" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName" aria-label="Enter your last name">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="e.g., Doe" required>
+                    </div>
+                </div>
+                <div class="form-group-half">
+                    <div class="form-group">
+                        <label for="phone">Mobile Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+CountryCode PhoneNumber" pattern="^\+(\d{1,4})\s?\d{7,15}$" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" min="1" placeholder="e.g., 25" required>
+                </div>
+                <div class="form-group-half">
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Birth">Date of Birth</label>
+                        <input type="date" id="Birth" name="Birth" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Disability">Do you have any Disability?</label>
+                    <select id="Disability" name="Disability">
+                        <option value="none">None</option>
+                        <option value="visual">Visual Impairment</option>
+                        <option value="hearing">Hearing Impairment</option>
+                        <option value="mobility">Mobility Impairment</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="LinkedIn">LinkedIn Profile</label>
+                    <input type="text" id="LinkedIn" name="LinkedIn" placeholder="e.g., linkedin.com/in/johndoe" minlength="5" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="GitHub">GitHub/Portfolio/Website (if applicable)</label>
+                    <input type="text" id="GitHub" name="GitHub" placeholder="e.g., github.com/johndoe" minlength="5" maxlength="100">
+                </div>
+                <div class="form-group-half">
+                    <div class="form-group">
+                        <label for="Degree">Degree</label>
+                        <input type="text" id="Degree" name="Degree" placeholder="e.g., Bachelor's, Master's" required> 
+                    </div>
+                    <div class="form-group">
+                        <label for="Major">Major</label>
+                        <input type="text" id="Major" name="Major" placeholder="e.g., Computer Science" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Institution">Institution</label>
+                    <input type="text" id="Institution" name="Institution" placeholder="e.g., University of XYZ" required>
+                </div>
+                <div class="form-group">
+                    <label for="Year">Graduation Year</label>
+                    <input type="text" id="Year" name="Year" pattern="^\d{4}$" placeholder="YYYY" required>
+                </div>
+                <div class="button-container">
+                    <button type="button" id="saveBtn">Save Changes</button>
+                    <button type="button" id="editBtn">Edit Information</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="../../utility/sidebar.js"></script>
+</body>
+</html>

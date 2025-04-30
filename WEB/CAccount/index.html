@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - TalentMatch</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="image-container">
+            <img src="poster-vector.jpg" alt="We are hiring">
+        </div>
+        <div class="form-container">
+            <h2>Create your account</h2>
+            <form id="signupForm">
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="Email" required>
+
+                <label for="password">Password:</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password', this)">
+                        <i class="material-icons">visibility_off</i>
+                    </button>
+                </div>
+
+                <div id="password-rules">
+                    <p id="length-rule" class="rule invalid">
+                        <span class="status-icon">✗</span> At least 8 characters
+                    </p>
+                    <p id="uppercase-rule" class="rule invalid">
+                        <span class="status-icon">✗</span> At least one uppercase letter
+                    </p>
+                    <p id="number-rule" class="rule invalid">
+                        <span class="status-icon">✗</span> At least one number
+                    </p>
+                    <p id="special-rule" class="rule invalid">
+                        <span class="status-icon">✗</span> At least one special character
+                    </p>
+                </div>
+
+                <label for="confirm-password">Confirm Password:</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirm-password" placeholder="Confirm password" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirm-password', this)">
+                        <i class="material-icons">visibility_off</i>
+                    </button>
+                </div>
+
+                <div id="verification-message" class="verification-message"></div>
+
+                <button class="create-account-btn" type="submit" id="submit-btn">
+                    <span id="btn-text">Create your account</span>
+                </button>
+
+                <button class="google-login-btn" type="button">
+                    <img src="google-icon.png" alt="Google Logo">
+                    Continue with Google
+                </button>
+            </form>
+            <p class="policy">By creating an account you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+            <p class="login-link">Already have an account? <a href="../Login/login.html">Log in</a></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
