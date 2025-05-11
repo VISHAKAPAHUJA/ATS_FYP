@@ -10,10 +10,12 @@ const cors = require('cors');
 
 // Import Models
 const User = require('./models/User');
-const Job = require('./models/Job'); // Uncomment if needed
-const Question = require('./models/Question'); // Uncomment if needed
-
+// const Job = require('./models/Job'); // Uncomment if needed
+// const Question = require('./models/Question'); // Uncomment if needed
+const jobRoutes = require('./routes/jobRoutes');
+const QuestionRoute = require('./routes/QuestionRoute');
 const app = express();
+
 
 // Middleware
 app.use(cors());
@@ -181,10 +183,9 @@ app.post('/api/auth/login', async (req, res) => {
             message: "Logged in successfully", 
             token,
             role,
-            redirectUrl: isHRManager 
-                ? "http://localhost:3000/" 
-                : "../home/homee.html"
-        });
+            // Remove full URLs and use consistent path format
+            redirectUrl: isHRManager ? '/dashboard' : '/home'
+        })
 
     } catch (error) {
         console.error("Login error:", error);
@@ -293,133 +294,8 @@ app.post('/api/auth/verify-reset-code', async (req, res) => {
         });
     }
 });
-// 🚀 Add Job Route
-app.post('/api/jobs', async (req, res) => {
-    const { title, location, brief, responsibilities, qualifications, skills } = req.body;
-
-    if (!title || !location || !brief) {
-        return res.status(400).json({ success: false, message: "Required fields are missing" });
-    }
-
-    try {
-        const newJob = new Job({ title, location, brief, responsibilities, qualifications, skills });
-        const savedJob = await newJob.save();
-        res.status(201).json({ success: true, message: "Job added successfully!", job: savedJob });
-    } catch (error) {
-        console.error("Error adding job:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-});
-
-// 🚀 Get All Jobs Route
-app.get('/api/jobs', async (req, res) => {
-    try {
-        const jobs = await Job.find();
-        res.json(jobs);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-});
-
-// 🚀 Get Single Job Details Route
-app.get('/api/jobs/:id', async (req, res) => {
-    try {
-        const job = await Job.findById(req.params.id);
-        if (!job) return res.status(404).json({ success: false, message: "Job not found" });
-
-        res.json(job);
-    } catch (error) {
-        console.error("Error fetching job details:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-});
-
-// 🚀 Update Job Route (NEW)
-app.put('/api/jobs/:id', async (req, res) => {
-    const { title, location, brief, responsibilities, qualifications, skills } = req.body;
-
-    if (!title || !location || !brief) {
-        return res.status(400).json({ success: false, message: "Required fields are missing" });
-    }
-
-    try {
-        const updatedJob = await Job.findByIdAndUpdate(
-            req.params.id,
-            { title, location, brief, responsibilities, qualifications, skills },
-            { new: true }
-        );
-
-        if (!updatedJob) return res.status(404).json({ success: false, message: "Job not found" });
-
-        res.json({ success: true, message: "Job updated successfully!", job: updatedJob });
-    } catch (error) {
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-});
-
-// 🚀 Delete Job Route (NEW)
-app.delete('/api/jobs/:id', async (req, res) => {
-    try {
-        const deletedJob = await Job.findByIdAndDelete(req.params.id);
-        if (!deletedJob) return res.status(404).json({ success: false, message: "Job not found" });
-
-        res.json({ success: true, message: "Job deleted successfully!" });
-    } catch (error) {
-        console.error("Error deleting job:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-});
-
-app.get('/api/questions', async (req, res) => {
-    const { category } = req.query;
-
-    if (!category) {
-        return res.status(400).json({ success: false, message: "Category is required" });
-    }
-
-    try {
-        const questions = await Question.find({ category }); // Filter by category
-        res.json(questions);
-    } catch (error) {
-        console.error("Error fetching questions:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-});
-app.post('/api/questions', async (req, res) => {
-    try {
-        const { category, question, options, correctAnswer } = req.body;
-
-        console.log("Received request data:", req.body);  // ✅ Log the request data
-
-        if (!category || !question || !options || !correctAnswer) {
-            return res.status(400).json({ success: false, message: "All fields are required" });
-        }
-
-        const newQuestion = new Question({ category, question, options, correctAnswer });
-        await newQuestion.save();
-
-        res.status(201).json({ success: true, message: "Question added successfully!" });
-    } catch (error) {
-        console.error("Error adding question:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-});
-
-app.delete('/api/questions/:id', async (req, res) => {
-    try {
-        const deletedQuestion = await Question.findByIdAndDelete(req.params.id);
-        if (!deletedQuestion) {
-            return res.status(404).json({ success: false, message: "Question not found" });
-        }
-        res.json({ success: true, message: "Question deleted successfully!" });
-    } catch (error) {
-        console.error("Error deleting question:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-});
-
-
+app.use('/api/jobs', jobRoutes); // Mount job routes
+app.use('/api/questions', QuestionRoute);
 
 // Start Server
 const PORT = process.env.PORT || 5000;

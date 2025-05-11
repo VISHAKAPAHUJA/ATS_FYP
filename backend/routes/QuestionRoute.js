@@ -1,57 +1,62 @@
 const express = require('express');
 const router = express.Router();
-const Question = require('../models/Question'); // Ensure the model path is correct
+const Question = require('../models/Question');
 
-// 🚀 Add a Question
-router.post('/questions', async (req, res) => {
-    try {
-        console.log("Received request data:", req.body);
-
-        const { category, question, options, correctAnswer } = req.body;
-
-        if (!category || !question || !options || !Array.isArray(options) || options.length < 2 || !correctAnswer) {
-            return res.status(400).json({ success: false, message: "Invalid question data" });
-        }
-
-        const newQuestion = new Question({ category, question, options, correctAnswer });
-        const savedQuestion = await newQuestion.save();
-
-        res.status(201).json(savedQuestion);
-    } catch (error) {
-        console.error("Error adding question:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
+// Get all questions for a job
+router.get('/job/:jobId', async (req, res) => {
+  try {
+    const questions = await Question.find({ jobId: req.params.jobId });
+    res.json(questions);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
-// 🚀 Get Questions by Category
-router.get('/questions', async (req, res) => {
-    try {
-        const { category } = req.query;
-        const query = category ? { category } : {}; // Apply filter if category is provided
-
-        const questions = await Question.find(query);
-        res.json(Array.isArray(questions) ? questions : []); // Ensure response is always an array
-    } catch (error) {
-        console.error("Error fetching questions:", error);
-        res.status(500).json({ success: false, message: "Server error" });
+// Create a new question (or multiple questions)
+router.post('/', async (req, res) => {
+  try {
+    // Handle single question or array of questions
+    if (Array.isArray(req.body)) {
+      const questions = await Question.insertMany(req.body);
+      res.status(201).json(questions);
+    } else {
+      const question = new Question(req.body);
+      const newQuestion = await question.save();
+      res.status(201).json(newQuestion);
     }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 });
 
-// 🚀 Delete a Question
-router.delete('/questions/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const deletedQuestion = await Question.findByIdAndDelete(id);
+// Update a question
+router.patch('/:id', async (req, res) => {
+  try {
+    const question = await Question.findById(req.params.id);
+    if (!question) return res.status(404).json({ message: 'Question not found' });
 
-        if (!deletedQuestion) {
-            return res.status(404).json({ success: false, message: "Question not found" });
-        }
+    if (req.body.questionText) question.questionText = req.body.questionText;
+    if (req.body.options) question.options = req.body.options;
+    if (req.body.correctAnswer) question.correctAnswer = req.body.correctAnswer;
 
-        res.json({ success: true, message: "Question deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting question:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
+    const updatedQuestion = await question.save();
+    res.json(updatedQuestion);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Delete a question
+router.delete('/:id', async (req, res) => {
+  try {
+    const question = await Question.findById(req.params.id);
+    if (!question) return res.status(404).json({ message: 'Question not found' });
+
+    await question.remove();
+    res.json({ message: 'Question deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;
