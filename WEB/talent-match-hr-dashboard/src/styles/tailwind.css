@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+.question-card:hover {
+  transform: translateY(-3px);
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(14, 60, 145, 0.15);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #0E3C91 0%, #1E88E5 50%, #90CAF9 100%);
+}
+
+.navbar-glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.menu-item {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: all 0.6s ease;
+}
+
+.menu-item:hover::before {
+  left: 100%;
+}
+
+.menu-item.active {
+  background: linear-gradient(90deg, rgba(14,60,145,0.1), rgba(14,60,145,0.3), rgba(14,60,145,0.1));
+  border-left: 3px solid #0E3C91;
+}
+
+.menu-icon {
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover .menu-icon {
+  transform: scale(1.2);
+}
+
+.stats-card {
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(14, 60, 145, 0.15);
+}
+
+.progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background-color: #E3F2FD;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #0E3C91, #1E88E5);
+  transition: width 0.6s ease;
+}
+
+.activity-item {
+  position: relative;
+  padding-left: 30px;
+}
+
+.activity-item::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background-color: #E3F2FD;
+}
+
+.activity-dot {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid #0E3C91;
+  background-color: white;
+  z-index: 1;
+}
+
+.chart-container {
+  position: relative;
+  height: 250px;
+}
+
+.candidate-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(14, 60, 145, 0.1);
+}
+
+.tab-button {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #0E3C91;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.pulse-effect {
+  animation: pulse 0.5s ease-in-out;
+}
+
+.float-effect {
+  animation: float 3s ease-in-out infinite;
+}
+
+.custom-shadow {
+  box-shadow: 0 4px 20px rgba(14, 60, 145, 0.12);
+}
+
+
+/* PostJob */
+/* Add these to your existing styles */
+.input-with-button {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .input-with-button input {
+    flex-grow: 1;
+  }
+  
+  .item-list {
+    margin-top: 8px;
+  }
+  
+  .item-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #E3F2FD;
+    color: #0E3C91;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  
+  .item-tag button {
+    margin-left: 8px;
+    color: #0E3C91;
+    opacity: 0.7;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .item-tag button:hover {
+    opacity: 1;
+  }
+  
+  .action-btn {
+    transition: all 0.2s ease;
+  }
+  
+  .action-btn:hover {
+    transform: scale(1.2);
+  }

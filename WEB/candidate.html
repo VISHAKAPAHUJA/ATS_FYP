@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidates Dashboard - Talent Match</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .custom-shadow {
+            box-shadow: 0 4px 20px rgba(14, 60, 145, 0.12);
+        }
+        .candidate-card:hover {
+            transform: translateY(-3px);
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(14, 60, 145, 0.15);
+        }
+        .tab-button {
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #0E3C91;
+        }
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background-color: #E3F2FD;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #0E3C91, #1E88E5);
+        }
+        .resume-score-excellent {
+            background: linear-gradient(90deg, #10B981, #34D399);
+        }
+        .resume-score-good {
+            background: linear-gradient(90deg, #3B82F6, #93C5FD);
+        }
+        .resume-score-average {
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+        }
+        .resume-score-poor {
+            background: linear-gradient(90deg, #EF4444, #F87171);
+        }
+        .assessment-score-excellent {
+            background: linear-gradient(90deg, #10B981, #34D399);
+        }
+        .assessment-score-good {
+            background: linear-gradient(90deg, #3B82F6, #93C5FD);
+        }
+        .assessment-score-average {
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+        }
+        .assessment-score-poor {
+            background: linear-gradient(90deg, #EF4444, #F87171);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-3">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-2 rounded-full bg-blue-100">
+                            <i class="fas fa-handshake text-blue-500 text-xl"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-gray-800">
+                            Talent<span class="font-light">Match</span>
+                        </h1>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <div class="hidden md:flex items-center space-x-4">
+                            <a href="#" class="text-gray-600 hover:text-blue-500 transition">
+                                <i class="fas fa-home mr-1"></i> Dashboard
+                            </a>
+                            <a href="#" class="text-blue-500 hover:text-blue-700 transition">
+                                <i class="fas fa-users mr-1"></i> Candidates
+                            </a>
+                        </div>
+                        <div class="relative group">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition cursor-pointer">
+                                <i class="fas fa-user text-gray-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar -->
+                <aside class="lg:w-1/4">
+                    <div class="bg-white rounded-xl shadow-lg p-6 sticky top-8">
+                        <h2 class="text-lg font-bold mb-6 text-gray-800 flex items-center">
+                            <i class="fas fa-user-tie mr-2 text-blue-500"></i>
+                            <span>HR Dashboard</span>
+                        </h2>
+                        <nav>
+                            <ul class="space-y-2">
+                                <li>
+                                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 text-gray-700 transition">
+                                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                            <i class="fas fa-home text-gray-600"></i>
+                                        </div>
+                                        <span>Dashboard</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-blue-500 font-medium">
+                                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                            <i class="fas fa-users text-blue-500"></i>
+                                        </div>
+                                        <span>Candidates</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 text-gray-700 transition">
+                                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                            <i class="fas fa-briefcase text-gray-600"></i>
+                                        </div>
+                                        <span>Jobs</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 text-gray-700 transition">
+                                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                            <i class="fas fa-chart-bar text-gray-600"></i>
+                                        </div>
+                                        <span>Analytics</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- Candidates Content -->
+                <div class="lg:w-3/4">
+                    <!-- Page Header -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-800 mb-2">Candidates Management</h1>
+                            <p class="text-gray-600">View and manage all candidates for your open positions</p>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <div class="relative">
+                                <select class="appearance-none bg-white border border-gray-300 rounded-lg pl-4 pr-10 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option>Senior Frontend Developer</option>
+                                    <option>UX/UI Designer</option>
+                                    <option>Data Scientist</option>
+                                    <option>Product Manager</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white rounded-xl shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">Total Candidates</p>
+                                    <h3 class="text-2xl font-bold text-gray-800">42</h3>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">Resume Passed</p>
+                                    <h3 class="text-2xl font-bold text-gray-800">28</h3>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-green-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">Assessment Passed</p>
+                                    <h3 class="text-2xl font-bold text-gray-800">15</h3>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                                    <i class="fas fa-check-circle text-purple-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="bg-white rounded-t-xl shadow-sm">
+                        <div class="flex overflow-x-auto">
+                            <button class="tab-button px-6 py-3 text-sm font-medium active text-blue-500">
+                                All Candidates
+                            </button>
+                            <button class="tab-button px-6 py-3 text-sm font-medium text-gray-500">
+                                Resume Passed
+                            </button>
+                            <button class="tab-button px-6 py-3 text-sm font-medium text-gray-500">
+                                Assessment Passed
+                            </button>
+                            <button class="tab-button px-6 py-3 text-sm font-medium text-gray-500">
+                                Interview Stage
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Candidates Table -->
+                    <div class="bg-white rounded-b-xl shadow-lg overflow-hidden">
+                        <!-- All Candidates Tab Content -->
+                        <div id="all-candidates" class="p-6 fade-in">
+                            <div class="flex justify-between items-center mb-6">
+                                <div class="relative w-full max-w-md">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-search text-gray-400"></i>
+                                    </div>
+                                    <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search candidates...">
+                                </div>
+                                <div class="flex space-x-3">
+                                    <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                        <i class="fas fa-filter mr-2"></i> Filter
+                                    </button>
+                                    <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                        <i class="fas fa-download mr-2"></i> Export
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidate</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applied Date</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                                        <span class="text-blue-800 font-medium">JS</span>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">John Smith</div>
+                                                        <div class="text-sm text-gray-500">Senior Frontend Dev</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">john.smith@example.com</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 15, 2023</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                    Resume Review
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                                <button class="text-red-600 hover:text-red-900">Reject</button>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                                        <span class="text-green-800 font-medium">JD</span>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Jane Doe</div>
+                                                        <div class="text-sm text-gray-500">UX Designer</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">jane.doe@example.com</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 12, 2023</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    Resume Passed
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                                <button class="text-red-600 hover:text-red-900">Reject</button>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                                        <span class="text-purple-800 font-medium">MB</span>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Michael Brown</div>
+                                                        <div class="text-sm text-gray-500">Data Scientist</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">michael.b@example.com</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 10, 2023</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                                    Assessment Passed
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                                <button class="text-red-600 hover:text-red-900">Reject</button>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                                                        <span class="text-red-800 font-medium">AR</span>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Alice Roberts</div>
+                                                        <div class="text-sm text-gray-500">Product Manager</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">alice.r@example.com</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 8, 2023</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                    Rejected
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                                <button class="text-gray-600 hover:text-gray-900">Restore</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="flex items-center justify-between border-t border-gray-200 px-6 py-4">
+                                <div class="flex-1 flex justify-between sm:hidden">
+                                    <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        Previous
+                                    </a>
+                                    <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        Next
+                                    </a>
+                                </div>
+                                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-700">
+                                            Showing <span class="font-medium">1</span> to <span class="font-medium">4</span> of <span class="font-medium">42</span> results
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Previous</span>
+                                                <i class="fas fa-chevron-left"></i>
+                                            </a>
+                                            <a href="#" aria-current="page" class="z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                1
+                                            </a>
+                                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                2
+                                            </a>
+                                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                3
+                                            </a>
+                                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                                ...
+                                            </span>
+                                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                8
+                                            </a>
+                                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                <span class="sr-only">Next</span>
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resume Passed Tab Content (Hidden by default) -->
+                        <div id="resume-passed" class="p-6 hidden">
+                            <div class="mb-6">
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">Candidates with Passed Resumes</h3>
+                                <p class="text-sm text-gray-500">These candidates have been approved by our AI screening model.</p>
+                            </div>
+
+                            <div class="space-y-4">
+                                <!-- Candidate Card -->
+                                <div class="candidate-card bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                        <div class="flex items-center mb-4 md:mb-0">
+                                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                                                <span class="text-green-800 font-medium text-lg">JD</span>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-medium text-gray-900">Jane Doe</h4>
+                                                <p class="text-sm text-gray-500">jane.doe@example.com</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col md:flex-row md:items-center md:space-x-6">
+                                            <div class="mb-3 md:mb-0">
+                                                <p class="text-xs font-medium text-gray-500 mb-1">RESUME SCORE</p>
+                                                <div class="flex items-center">
+                                                    <div class="w-24 h-2 rounded-full mr-2 resume-score-excellent"></div>
+                                                    <span class="text-sm font-medium text-gray-900">92/100</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500 mb-1">RESUME</p>
+                                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                    <i class="fas fa-file-pdf mr-1"></i> View Resume
+                                                </button>
+                                            </div>
+                                            <div class="mt-3 md:mt-0">
+                                                <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                                                    Schedule Interview
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Candidate Card -->
+                                <div class="candidate-card bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                        <div class="flex items-center mb-4 md:mb-0">
+                                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                                                <span class="text-blue-800 font-medium text-lg">TS</span>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-medium text-gray-900">Thomas Smith</h4>
+                                                <p class="text-sm text-gray-500">thomas.s@example.com</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col md:flex-row md:items-center md:space-x-6">
+                                            <div class="mb-3 md:mb-0">
+                                                <p class="text-xs font-medium text-gray-500 mb-1">RESUME SCORE</p>
+                                                <div class="flex items-center">
+                                                    <div class="w-24 h-2 rounded-full mr-2 resume-score-good"></div>
+                                                    <span class="text-sm font-medium text-gray-900">78/100</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500 mb-1">RESUME</p>
+                                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                    <i class="fas fa-file-word mr-1"></i> View Resume
+                                                </button>
+                                            </div>
+                                            <div class="mt-3 md:mt-0">
+                                                <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                                                    Schedule Interview
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Candidate Card -->
+                                <div class="candidate-card bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                        <div class="flex items-center mb-4 md:mb-0">
+                                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                                                <span class="text-purple-800 font-medium text-lg">EJ</span>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-medium text-gray-900">Emily Johnson</h4>
+                                                <p class="text-sm text-gray-500">emily.j@example.com</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col md:flex-row md:items-center md:space-x-6">
+                                            <div class="mb-3 md:mb-0">
+                                                <p class="text-xs font-medium text-gray-500 mb-1">RESUME SCORE</p>
+                                                <div class="flex items-center">
+                                                    <div class="w-24 h-2 rounded-full mr-2 resume-score-excellent"></div>
+                                                    <span class="text-sm font-medium text-gray-900">88/100</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500 mb-1">RESUME</p>
+                                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                    <i class="fas fa-file-pdf mr-1"></i> View Resume
+                                                </button>
+                                            </div>
+                                            <div class="mt-3 md:mt-0">
+                                                <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                                                    Schedule Interview
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
+                                <div>
+                                    <p class="text-sm text-gray-700">
+                                        Showing <span class="font-medium">1</span> to <span class="font-medium">3</span> of <span class="font-medium">28</span> results
+                                    </p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                        Previous
+                                    </button>
+                                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assessment Passed Tab Content (Hidden by default) -->
+                        <div id="assessment-passed" class="p-6 hidden">
+                            <div class="mb-6">
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">Candidates with Passed Assessments</h3>
+                                <p class="text-sm text-gray-500">These candidates have successfully passed both resume screening and skills assessment.</p>
+                            </div>
+
+                            <div class="space-y-4">
+                                <!-- Candidate Card -->
+                                <div class="candidate-card bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                        <div class="flex items-center mb-4 md:mb-0">
+                                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                                                <span class="text-purple-800 font-medium text-lg">MB</span>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-medium text-gray-900">Michael Brown</h4>
+                                                <p class="text-sm text-gray-500">michael.b@example.com</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col md:flex-row md:items-center md:space-x-6">
+                                            <div class="mb-3 md:mb-0">
+                                                <p class="text-xs font-medium text-gray-500 mb-1">RESUME SCORE</p>
+                                                <div class="flex items-center">
+                                                    <div class="w-24 h-2 rounded-full mr-2 resume-score-excellent"></div>
+                                                    <span class="text-sm font-medium text-gray-900">95/100</span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 md:mb-0">
+                                                <p class="text-xs font-medium text-gray-500 mb-1">TEST SCORE</p>
+                                                <div class="flex items-center">
+                                                    <div class="w-24 h-2 rounded-full mr-2 assessment-score-excellent"></div>
+                                                    <span class="text-sm font-medium text-gray-900">92/100</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500 mb-1">DOCUMENTS</p>
+                                                <div class="flex space-x-3">
+                                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                        <i class="fas fa-file-pdf mr-1"></i> Resume
+                                                    </button>
+                                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                        <i class="fas fa-file-alt mr-1"></i> Test
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3 md:mt-0">
+                                                <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                                                    Schedule Final Interview
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Candidate Card -->
+                                <div class="candidate-card bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                        <div class="flex items-center mb-4 md:mb-0">
+                                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                                                <span class="text-green-800 font-medium text-lg">SR</span>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-medium text-gray-900">Sarah Roberts</h4>
+                                                <p class="text-sm text-gray-500">sarah.r@example.com</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col md:flex-row md:items-center md:space-x-6">
+                                            <div class="mb-3 md:mb-0">
+                                                <p class="text-xs font-medium text-gray-500 mb-1">RESUME SCORE</p>
+                                                <div class="flex items-center">
+                                                    <div class="w-24 h-2 rounded-full mr-2 resume-score-good"></div>
+                                                    <span class="text-sm font-medium text-gray-900">82/100</span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 md:mb-0">
+                                                <p class="text-xs font-medium text-gray-500 mb-1">TEST SCORE</p>
+                                                <div class="flex items-center">
+                                                    <div class="w-24 h-2 rounded-full mr-2 assessment-score-good"></div>
+                                                    <span class="text-sm font-medium text-gray-900">85/100</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500 mb-1">DOCUMENTS</p>
+                                                <div class="flex space-x-3">
+                                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                        <i class="fas fa-file-word mr-1"></i> Resume
+                                                    </button>
+                                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                        <i class="fas fa-file-alt mr-1"></i> Test
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3 md:mt-0">
+                                                <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                                                    Schedule Final Interview
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Candidate Card -->
+                                <div class="candidate-card bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                        <div class="flex items-center mb-4 md:mb-0">
+                                            <div class="flex-shrink-0 h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center mr-4">
+                                                <span class="text-yellow-800 font-medium text-lg">DW</span>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-medium text-gray-900">David Wilson</h4>
+                                                <p class="text-sm text-gray-500">david.w@example.com</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col md:flex-row md:items-center md:space-x-6">
+                                            <div class="mb-3 md:mb-0">
+                                                <p class="text-xs font-medium text-gray-500 mb-1">RESUME SCORE</p>
+                                                <div class="flex items-center">
+                                                    <div class="w-24 h-2 rounded-full mr-2 resume-score-average"></div>
+                                                    <span class="text-sm font-medium text-gray-900">72/100</span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 md:mb-0">
+                                                <p class="text-xs font-medium text-gray-500 mb-1">TEST SCORE</p>
+                                                <div class="flex items-center">
+                                                    <div class="w-24 h-2 rounded-full mr-2 assessment-score-excellent"></div>
+                                                    <span class="text-sm font-medium text-gray-900">94/100</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-500 mb-1">DOCUMENTS</p>
+                                                <div class="flex space-x-3">
+                                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                        <i class="fas fa-file-pdf mr-1"></i> Resume
+                                                    </button>
+                                                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                        <i class="fas fa-file-alt mr-1"></i> Test
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3 md:mt-0">
+                                                <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                                                    Schedule Final Interview
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
+                                <div>
+                                    <p class="text-sm text-gray-700">
+                                        Showing <span class="font-medium">1</span> to <span class="font-medium">3</span> of <span class="font-medium">15</span> results
+                                    </p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                        Previous
+                                    </button>
+                                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabs = document.querySelectorAll('.tab-button');
+            const tabContents = {
+                'all-candidates': document.getElementById('all-candidates'),
+                'resume-passed': document.getElementById('resume-passed'),
+                'assessment-passed': document.getElementById('assessment-passed')
+            };
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Update tab styles
+                    tabs.forEach(t => {
+                        t.classList.remove('active', 'text-blue-500');
+                        t.classList.add('text-gray-500');
+                    });
+                    this.classList.add('active', 'text-blue-500');
+                    this.classList.remove('text-gray-500');
+
+                    // Hide all tab contents
+                    Object.values(tabContents).forEach(content => {
+                        content.classList.add('hidden');
+                    });
+
+                    // Show the selected tab content
+                    let tabId = '';
+                    if (this.textContent.trim() === 'All Candidates') {
+                        tabId = 'all-candidates';
+                    } else if (this.textContent.trim() === 'Resume Passed') {
+                        tabId = 'resume-passed';
+                    } else if (this.textContent.trim() === 'Assessment Passed') {
+                        tabId = 'assessment-passed';
+                    }
+
+                    if (tabId && tabContents[tabId]) {
+                        tabContents[tabId].classList.remove('hidden');
+                        tabContents[tabId].classList.add('fade-in');
+                    }
+                });
+            });
+
+            // Simulate loading animation for progress bars
+            const progressBars = document.querySelectorAll('.resume-score-excellent, .resume-score-good, .resume-score-average, .assessment-score-excellent, .assessment-score-good, .assessment-score-average');
+            progressBars.forEach(bar => {
+                const currentWidth = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = currentWidth;
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>
