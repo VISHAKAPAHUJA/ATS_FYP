@@ -71,15 +71,23 @@ const Login = () => {
       }
 
       if (data.redirectUrl) {
-        let redirectPath = data.redirectUrl;
-        try {
-          const url = new URL(data.redirectUrl);
-          redirectPath = url.pathname + url.search + url.hash;
-        } catch (e) {}
-        navigate(redirectPath || "/dashboard");
-      } else {
-        navigate(data.role === "HRManager" ? "/dashboard" : "/home");
-      }
+    // Check if it looks like a full URL (even if malformed)
+    if (data.redirectUrl.includes('http://') || data.redirectUrl.includes('https://')) {
+        // Extract the correct URL (remove leading slashes)
+        const fixedUrl = data.redirectUrl.replace(/^\/+/, '');
+        window.location.href = fixedUrl;  // Full page redirect
+    } else {
+        // Normal path navigation
+        navigate(data.redirectUrl || "/dashboard");
+    }
+} else {
+    // Default navigation (if no redirectUrl is provided)
+    if (data.role === "HRManager") {
+        navigate("/dashboard");
+    } else {
+        window.location.href = "http://localhost:3001/candidate_dashboard";
+    }
+}
     } catch (error) {
       console.error("Login error:", error);
       setError(error.message || "Something went wrong. Please try again.");

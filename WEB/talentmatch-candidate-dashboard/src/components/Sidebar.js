@@ -61,7 +61,7 @@ const Sidebar = () => {
           <ul className="space-y-2">
             <li>
               <Link
-                to="/"
+                to="/candidate_dashboard"
                 className="menu-item flex items-center space-x-3 p-3 rounded-lg bg-blue-50 text-blue-600 font-medium hover:bg-blue-100 transition transform hover:translate-x-2"
               >
                 <div className="menu-icon w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">

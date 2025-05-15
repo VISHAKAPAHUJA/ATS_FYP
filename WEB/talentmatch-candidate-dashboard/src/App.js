@@ -22,7 +22,7 @@ function App() {
           <Sidebar />
           <main className="lg:w-[1200px]"> {/* Fixed specific width */}
             <Routes>
-              <Route path="/" element={<MainContent />} />
+              <Route path="/candidate_dashboard" element={<MainContent />} />
               <Route path="/find-jobs" element={<FindJobs />} />
               <Route path="/applications" element={<TalentMatchApplications />} />
               <Route path="/interviews" element={<TalentMatchInterviews />} />
