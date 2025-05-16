@@ -38,63 +38,64 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    if (!formData.username || !formData.password) {
-      setError("Please fill in all fields.");
-      return;
+  if (!formData.username || !formData.password) {
+    setError("Please fill in all fields.");
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: formData.username,
+        password: formData.password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Login failed");
     }
 
-    setIsLoading(true);
-
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.username,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      if (data.token) {
-        localStorage.setItem("authToken", data.token);
-      }
-
-      if (data.redirectUrl) {
-    // Check if it looks like a full URL (even if malformed)
-    if (data.redirectUrl.includes('http://') || data.redirectUrl.includes('https://')) {
-        // Extract the correct URL (remove leading slashes)
-        const fixedUrl = data.redirectUrl.replace(/^\/+/, '');
-        window.location.href = fixedUrl;  // Full page redirect
-    } else {
-        // Normal path navigation
-        navigate(data.redirectUrl || "/dashboard");
-    }
+    // Store the token (update this part only)
+    if (data.token) {
+  localStorage.setItem("token", data.token);
+  console.log("Token stored:", data.token); // Debug log
 } else {
-    // Default navigation (if no redirectUrl is provided)
-    if (data.role === "HRManager") {
-        navigate("/dashboard");
-    } else {
-        window.location.href = "http://localhost:3001/candidate_dashboard";
-    }
+  console.error("No token received in login response");
 }
-    } catch (error) {
-      console.error("Login error:", error);
-      setError(error.message || "Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
+
+    // Rest of your existing redirect logic remains exactly the same
+    if (data.redirectUrl) {
+      if (data.redirectUrl.includes('http://') || data.redirectUrl.includes('https://')) {
+        const fixedUrl = data.redirectUrl.replace(/^\/+/, '');
+        window.location.href = fixedUrl;
+      } else {
+        navigate(data.redirectUrl || "/dashboard");
+      }
+    } else {
+      if (data.role === "HRManager") {
+        navigate("/dashboard");
+      } else {
+        window.location.href = "http://localhost:3001/candidate_dashboard";
+      }
     }
-  };
+  } catch (error) {
+    console.error("Login error:", error);
+    setError(error.message || "Something went wrong. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();

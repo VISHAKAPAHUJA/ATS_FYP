@@ -2,6 +2,15 @@ import React from 'react';
 import { FaHandshake, FaHome, FaBell, FaUser } from 'react-icons/fa';
 
 const Header = () => {
+  const handleLogout = () => {
+    // Clear session data (if any)
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    
+    // Redirect to login page (cross-origin)
+    window.location.href = 'http://localhost:3000/login';
+  };
+
   return (
     <header className="gradient-bg text-white shadow-lg">
       <div className="container mx-auto px-4 py-3">
@@ -31,7 +40,12 @@ const Header = () => {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl py-1 z-50 hidden group-hover:block opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                 <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">Profile</a>
                 <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">Settings</a>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">Log out</a>
+                <button 
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
+                >
+                  Log out
+                </button>
               </div>
             </div>
           </div>
