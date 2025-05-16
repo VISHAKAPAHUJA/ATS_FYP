@@ -56,4 +56,15 @@ UserSchema.pre('save', async function(next) {
         next(err);
     }
 });
+// new thing
+// Add to User.js after the pre-save hook
+UserSchema.methods.generateAuthToken = function() {
+  const user = this;
+  const token = jwt.sign(
+    { _id: user._id.toString() },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+  return token;
+};
 module.exports = mongoose.model('User', UserSchema);
