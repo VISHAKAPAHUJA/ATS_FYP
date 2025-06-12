@@ -66,13 +66,19 @@ const Login = () => {
       throw new Error(data.message || "Login failed");
     }
 
-    // Store the token (update this part only)
+    // Enhanced token storage
     if (data.token) {
-  localStorage.setItem("token", data.token);
-  console.log("Token stored:", data.token); // Debug log
-} else {
-  console.error("No token received in login response");
-}
+      localStorage.setItem("token", data.token);
+      // Also store expiration time if available
+      if (data.expiresIn) {
+        const expiresAt = Date.now() + data.expiresIn * 1000;
+        localStorage.setItem("token_expires", expiresAt.toString());
+      }
+      console.log("Token stored successfully");
+    } else {
+      console.error("Login response:", data);
+      throw new Error("Authentication token not received");
+    }
 
     // Rest of your existing redirect logic remains exactly the same
     if (data.redirectUrl) {
