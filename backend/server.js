@@ -15,6 +15,7 @@ const User = require("./models/User");
 const jobRoutes = require("./routes/jobRoutes");
 const QuestionRoute = require("./routes/QuestionRoute");
 const jobApplicationsRouter = require('./routes/jobApplications');
+
 const app = express();
 
 // Middleware
@@ -295,9 +296,14 @@ app.post("/api/auth/verify-reset-code", async (req, res) => {
     });
   }
 });
-app.use("/api/jobs", jobRoutes); // Mount job routes
-app.use("/api/questions", QuestionRoute);
-app.use('/api/jobs', jobApplicationsRouter);
+
+
+// app.use('/api/jobs', jobApplicationsRouter);
+
+
+app.use("/api/jobs", jobRoutes);           // For job-related routes
+app.use("/api/questions", QuestionRoute);  // For question-related routes
+app.use("/api/applications", jobApplicationsRouter);  // Changed to distinct path
 
 // Start Server
 const PORT = process.env.PORT || 5000;
