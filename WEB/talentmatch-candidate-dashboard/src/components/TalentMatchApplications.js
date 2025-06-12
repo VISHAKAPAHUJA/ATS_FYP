@@ -1,80 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 
 const TalentMatchApplications = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchInput, setSearchInput] = useState('');
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const applications = [
-    {
-      id: 1,
-      title: "UX Designer",
-      company: "TechCorp Inc.",
-      location: "San Francisco, CA (Remote)",
-      salary: "$90k - $120k/year",
-      status: "accepted",
-      appliedDate: "2 days ago",
-      skills: ["UI/UX", "Figma", "Research"],
-      icon: "building",
-      iconColor: "blue"
-    },
-    {
-      id: 2,
-      title: "Product Designer",
-      company: "EcoStart",
-      location: "New York, NY (Hybrid)",
-      salary: "$85k - $110k/year",
-      status: "pending",
-      appliedDate: "1 week ago",
-      skills: ["Product", "Prototyping", "User Testing"],
-      icon: "leaf",
-      iconColor: "green"
-    },
-    {
-      id: 3,
-      title: "Senior UX Designer",
-      company: "ShopMega",
-      location: "Chicago, IL (On-site)",
-      salary: "$100k - $140k/year",
-      status: "rejected",
-      appliedDate: "2 weeks ago",
-      skills: ["E-commerce", "Mobile", "Accessibility"],
-      icon: "shopping-cart",
-      iconColor: "red"
-    },
-    {
-      id: 4,
-      title: "UI/UX Lead",
-      company: "DevSolutions",
-      location: "Boston, MA (Remote)",
-      salary: "$110k - $150k/year",
-      status: "accepted",
-      appliedDate: "3 weeks ago",
-      skills: ["Leadership", "Team", "Strategy"],
-      icon: "laptop-code",
-      iconColor: "purple"
-    },
-    {
-      id: 5,
-      title: "Mobile Designer",
-      company: "AppVenture",
-      location: "Austin, TX (Hybrid)",
-      salary: "$95k - $125k/year",
-      status: "pending",
-      appliedDate: "1 day ago",
-      skills: ["iOS", "Android", "Responsive"],
-      icon: "mobile-alt",
-      iconColor: "yellow"
+  const fetchApplications = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setApplications([]);
+        setError('Please login to view applications');
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/api/applications", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch applications');
+      }
+
+      const data = await response.json();
+      
+      // Transform the data to match frontend expectations
+      const transformedApplications = (data.applications || []).map(app => ({
+        ...app,
+        status: app.status === 'submitted' ? 'pending' : app.status,
+        appliedDate: formatDate(app.appliedDate)
+      }));
+
+      setApplications(transformedApplications);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error("Error fetching applications:", err);
+      setApplications([]);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchApplications();
+    
+    // Add event listener for application updates
+    const handleApplicationUpdate = () => {
+      console.log('Received application update event');
+      fetchApplications();
+    };
+    
+    window.addEventListener('applicationSubmitted', handleApplicationUpdate);
+    
+    return () => {
+      window.removeEventListener('applicationSubmitted', handleApplicationUpdate);
+    };
+  }, []);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    } catch (e) {
+      console.error('Error formatting date:', dateString, e);
+      return 'N/A';
+    }
+  };
 
   const filteredApplications = applications.filter(app => {
-    // Filter by search input
     const matchesSearch = 
-      app.title.toLowerCase().includes(searchInput.toLowerCase()) ||
-      app.company.toLowerCase().includes(searchInput.toLowerCase());
+      app.title?.toLowerCase().includes(searchInput.toLowerCase()) ||
+      app.company?.toLowerCase().includes(searchInput.toLowerCase());
     
-    // Filter by active tab
     const matchesTab = 
       activeTab === 'all' || 
       app.status === activeTab;
@@ -84,29 +92,33 @@ const TalentMatchApplications = () => {
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'accepted':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+      case 'accepted': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'rejected': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusIcon = (status) => {
     switch(status) {
-      case 'accepted':
-        return 'check-circle text-green-500';
-      case 'pending':
-        return 'clock text-yellow-500';
-      case 'rejected':
-        return 'times-circle text-red-500';
-      default:
-        return 'question-circle text-gray-500';
+      case 'accepted': return 'check-circle text-green-500';
+      case 'pending': return 'clock text-yellow-500';
+      case 'rejected': return 'times-circle text-red-500';
+      default: return 'question-circle text-gray-500';
     }
   };
+
+  const handleRefresh = () => {
+    fetchApplications();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 mb-6 max-w-6xl mx-auto">
@@ -117,20 +129,6 @@ const TalentMatchApplications = () => {
             .application-card:hover {
               transform: translateY(-5px);
               box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-            }
-            .progress-fill.wave::after {
-              content: '';
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-              animation: wave 2s linear infinite;
-            }
-            @keyframes wave {
-              0% { transform: translateX(-100%); }
-              100% { transform: translateX(100%); }
             }
           `}
         </style>
@@ -152,14 +150,16 @@ const TalentMatchApplications = () => {
             />
             <i className="fas fa-search absolute left-3 top-3 text-gray-400"></i>
           </div>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center">
-            <i className="fas fa-filter mr-2"></i>
-            Filter
+          <button 
+            onClick={handleRefresh}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center"
+          >
+            <i className="fas fa-sync-alt mr-2"></i>
+            Refresh
           </button>
         </div>
       </div>
 
-      {/* Status Tabs */}
       <div className="border-b border-gray-200 mb-6">
         <nav className="flex space-x-8">
           <button 
@@ -192,119 +192,111 @@ const TalentMatchApplications = () => {
         </nav>
       </div>
 
-      {/* Application Cards */}
       <div className="space-y-4">
-        {filteredApplications.map(application => (
-          <div key={application.id} className="application-card bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition duration-300">
-            <div className="flex flex-col md:flex-row md:items-center">
-              <div className="flex items-center mb-4 md:mb-0 md:w-1/3">
-                <div className={`w-12 h-12 rounded-lg bg-${application.iconColor}-100 flex items-center justify-center mr-4`}>
-                  <i className={`fas fa-${application.icon} text-${application.iconColor}-600 text-xl`}></i>
+        {filteredApplications.length > 0 ? (
+          filteredApplications.map(application => (
+            <div key={application._id} className="application-card bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition duration-300">
+              <div className="flex flex-col md:flex-row md:items-center">
+                <div className="flex items-center mb-4 md:mb-0 md:w-1/3">
+                  <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
+                    <i className="fas fa-building text-blue-600 text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800">{application.title}</h3>
+                    <p className="text-sm text-gray-500">{application.company}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-800">{application.title}</h3>
-                  <p className="text-sm text-gray-500">{application.company}</p>
+                <div className="md:w-1/3 mb-4 md:mb-0">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <i className="fas fa-map-marker-alt mr-2 text-gray-400"></i>
+                    <span>{application.location}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600 mt-1">
+                    <i className="fas fa-dollar-sign mr-2 text-gray-400"></i>
+                    <span>{application.salary}</span>
+                  </div>
+                </div>
+                <div className="md:w-1/3 flex md:justify-end">
+                  <div className="flex flex-col items-end">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(application.status)}`}>
+                      <i className={`fas fa-${getStatusIcon(application.status)} mr-1`}></i> 
+                      {application.status === 'accepted' ? 'Accepted' : 
+                       application.status === 'pending' ? 'Under Review' : 'Rejected'}
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">Applied: {application.appliedDate}</span>
+                  </div>
                 </div>
               </div>
-              <div className="md:w-1/3 mb-4 md:mb-0">
-                <div className="flex items-center text-sm text-gray-600">
-                  <i className="fas fa-map-marker-alt mr-2 text-gray-400"></i>
-                  <span>{application.location}</span>
+              <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                <div className="flex space-x-2">
+                  {application.skills?.map((skill, index) => (
+                    <span key={index} className="px-3 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">
+                      {skill}
+                    </span>
+                  ))}
                 </div>
-                <div className="flex items-center text-sm text-gray-600 mt-1">
-                  <i className="fas fa-dollar-sign mr-2 text-gray-400"></i>
-                  <span>{application.salary}</span>
+                <div className="flex space-x-2">
+                  <button className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-blue-50 transition">
+                    <i className="fas fa-ellipsis-h"></i>
+                  </button>
+                  <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center">
+                    {application.status === 'accepted' ? (
+                      <>
+                        <i className="fas fa-calendar mr-2"></i> Schedule
+                      </>
+                    ) : application.status === 'rejected' ? (
+                      <>
+                        <i className="fas fa-comment mr-2"></i> Feedback
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-eye mr-2"></i> View Job
+                      </>
+                    )}
+                  </button>
                 </div>
-              </div>
-              <div className="md:w-1/3 flex md:justify-end">
-                <div className="flex flex-col items-end">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(application.status)}`}>
-                    <i className={`fas fa-${getStatusIcon(application.status)} mr-1`}></i> 
-                    {application.status === 'accepted' ? 'Accepted' : 
-                     application.status === 'pending' ? 'Under Review' : 'Rejected'}
-                  </span>
-                  <span className="text-xs text-gray-500 mt-1">Applied: {application.appliedDate}</span>
-                </div>
-              </div>
-            </div>
-            <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
-              <div className="flex space-x-2">
-                {application.skills.map((skill, index) => (
-                  <span 
-                    key={index}
-                    className={`px-3 py-1 bg-${skill.toLowerCase() === 'ui/ux' ? 'blue' : 
-                              skill.toLowerCase() === 'figma' ? 'purple' :
-                              skill.toLowerCase() === 'research' ? 'indigo' :
-                              skill.toLowerCase() === 'product' ? 'green' :
-                              skill.toLowerCase() === 'prototyping' ? 'teal' :
-                              skill.toLowerCase() === 'user testing' ? 'emerald' :
-                              skill.toLowerCase() === 'e-commerce' ? 'red' :
-                              skill.toLowerCase() === 'mobile' ? 'orange' :
-                              skill.toLowerCase() === 'accessibility' ? 'amber' :
-                              skill.toLowerCase() === 'leadership' ? 'purple' :
-                              skill.toLowerCase() === 'team' ? 'fuchsia' :
-                              skill.toLowerCase() === 'strategy' ? 'pink' :
-                              skill.toLowerCase() === 'ios' ? 'yellow' :
-                              skill.toLowerCase() === 'android' ? 'blue' : 'cyan'}-50 text-${skill.toLowerCase() === 'ui/ux' ? 'blue' : 
-                              skill.toLowerCase() === 'figma' ? 'purple' :
-                              skill.toLowerCase() === 'research' ? 'indigo' :
-                              skill.toLowerCase() === 'product' ? 'green' :
-                              skill.toLowerCase() === 'prototyping' ? 'teal' :
-                              skill.toLowerCase() === 'user testing' ? 'emerald' :
-                              skill.toLowerCase() === 'e-commerce' ? 'red' :
-                              skill.toLowerCase() === 'mobile' ? 'orange' :
-                              skill.toLowerCase() === 'accessibility' ? 'amber' :
-                              skill.toLowerCase() === 'leadership' ? 'purple' :
-                              skill.toLowerCase() === 'team' ? 'fuchsia' :
-                              skill.toLowerCase() === 'strategy' ? 'pink' :
-                              skill.toLowerCase() === 'ios' ? 'yellow' :
-                              skill.toLowerCase() === 'android' ? 'blue' : 'cyan'}-600 text-xs rounded-full`}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-              <div className="flex space-x-2">
-                <button className="p-2 text-gray-400 hover:text-blue-500 rounded-full hover:bg-blue-50 transition">
-                  <i className="fas fa-ellipsis-h"></i>
-                </button>
-                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center">
-                  {application.status === 'accepted' ? (
-                    <>
-                      <i className="fas fa-calendar mr-2"></i> Schedule
-                    </>
-                  ) : application.status === 'rejected' ? (
-                    <>
-                      <i className="fas fa-comment mr-2"></i> Feedback
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-eye mr-2"></i> View Job
-                    </>
-                  )}
-                </button>
               </div>
             </div>
+          ))
+        ) : (
+          <div className="text-center py-10">
+            <i className="fas fa-file-alt text-4xl text-gray-300 mb-4"></i>
+            <h3 className="text-lg font-medium text-gray-500">
+              {error ? 'Error loading applications' : 'No applications yet'}
+            </h3>
+            <p className="text-gray-400 mt-1">
+              {error ? error : 'Your applied jobs will appear here'}
+            </p>
+            {error && (
+              <button 
+                onClick={handleRefresh}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                <i className="fas fa-sync-alt mr-2"></i>
+                Try Again
+              </button>
+            )}
           </div>
-        ))}
+        )}
       </div>
 
-      {/* Pagination */}
-      <div className="mt-8 flex items-center justify-between">
-        <div className="text-sm text-gray-500">
-          Showing <span className="font-medium">1</span> to <span className="font-medium">{filteredApplications.length}</span> of <span className="font-medium">{filteredApplications.length}</span> applications
+      {filteredApplications.length > 0 && (
+        <div className="mt-8 flex items-center justify-between">
+          <div className="text-sm text-gray-500">
+            Showing <span className="font-medium">1</span> to <span className="font-medium">{filteredApplications.length}</span> of <span className="font-medium">{applications.length}</span> applications
+          </div>
+          <div className="flex space-x-2">
+            <button className="px-3 py-1 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-50" disabled>
+              <i className="fas fa-chevron-left"></i>
+            </button>
+            <button className="px-3 py-1 bg-blue-600 text-white rounded-lg">1</button>
+            <button className="px-3 py-1 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">2</button>
+            <button className="px-3 py-1 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+              <i className="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
-        <div className="flex space-x-2">
-          <button className="px-3 py-1 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-50" disabled>
-            <i className="fas fa-chevron-left"></i>
-          </button>
-          <button className="px-3 py-1 bg-blue-600 text-white rounded-lg">1</button>
-          <button className="px-3 py-1 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">2</button>
-          <button className="px-3 py-1 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-            <i className="fas fa-chevron-right"></i>
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
