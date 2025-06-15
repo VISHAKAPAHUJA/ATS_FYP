@@ -37,8 +37,6 @@ const upload = multer({
 
 // Get all applications for authenticated user
 router.get('/', auth, async (req, res) => {
-  console.log("====req.user====", req.user);
-  
   try {
     const applications = await Application.find({ applicant: req.user._id })
       .populate('job', 'title company location salary skills')
