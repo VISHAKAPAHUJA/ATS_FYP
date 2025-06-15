@@ -34,6 +34,8 @@ const TalentMatchApplications = () => {
       }
 
       const data = await response.json();
+      console.log("====data====", data);
+      
 
       // Transform the data to match frontend expectations
       const transformedApplications = (data.applications || []).map(app => ({
