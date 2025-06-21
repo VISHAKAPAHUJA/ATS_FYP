@@ -41,20 +41,32 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+
 // Signup Route
-// Signup Route
+// Updated Signup Route with username
 app.post("/api/auth/signup", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, username, password } = req.body;
 
   try {
-    // Check if user exists
-    const existingUser = await User.findOne({ email });
+    // Check if email or username already exists
+    const existingUser = await User.findOne({ 
+      $or: [{ email }, { username }] 
+    });
+    
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: existingUser.isVerified
+        message: existingUser.email === email
           ? "Email already in use"
-          : "Verification code already sent. Please check your email.",
+          : "Username already taken",
+      });
+    }
+
+    // Validate username format
+    if (!/^[a-zA-Z0-9_]{3,30}$/.test(username)) {
+      return res.status(400).json({
+        success: false,
+        message: "Username must be 3-30 characters (letters, numbers, underscores)",
       });
     }
 
@@ -63,9 +75,10 @@ app.post("/api/auth/signup", async (req, res) => {
       100000 + Math.random() * 900000
     ).toString();
 
-    // Create new user
+    // Create new user with username
     const newUser = new User({
       email,
+      username,
       password,
       verificationCode,
       verificationCodeExpires: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
@@ -74,7 +87,7 @@ app.post("/api/auth/signup", async (req, res) => {
 
     await newUser.save();
 
-    // Send verification email
+    // Send verification email (unchanged)
     await transporter.sendMail({
       from: `"TalentMatch ATS" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -95,7 +108,8 @@ app.post("/api/auth/signup", async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Verification code sent to your email",
-      email: email, // Include email for redirection
+      email: email,
+      username: username, // Include username in response
     });
   } catch (error) {
     console.error("Signup error:", error);
@@ -173,7 +187,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     // 4. Determine user role (updated with new HR email)
     // const isHRManager = email.toLowerCase() === "talentmatch.ats@gmail.com";
-    const isHRManager = email.toLowerCase() === "abhishekkamyani@gmail.com";
+    const isHRManager = email.toLowerCase() === "talentmatch.ats@gmail.com";
     const role = isHRManager ? "HRManager" : "User";
     console.log("Successful login for:", email, "Role:", role);
 
@@ -197,6 +211,39 @@ app.post("/api/auth/login", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error during login",
+    });
+  }
+});
+// Add this route to your server.js
+
+app.get('/api/auth/user', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    const user = await User.findById(decoded.id)
+      .select('username email'); // Only fetch username and email
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.json({
+      success: true,
+      user: {
+        username: user.username,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching user data'
     });
   }
 });

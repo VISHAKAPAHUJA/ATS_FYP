@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaHandshake, FaHome, FaBell, FaUser } from 'react-icons/fa';
+import { FaHandshake, FaUser } from 'react-icons/fa';
 
 const Header = () => {
   const handleLogout = () => {
@@ -24,15 +24,6 @@ const Header = () => {
             </h1>
           </div>
           <div className="flex items-center space-x-6">
-            <div className="hidden md:flex items-center space-x-4">
-              <a href="#" className="text-white hover:text-blue-100 transition transform hover:scale-105">
-                <FaHome className="mr-1 inline" /> Dashboard
-              </a>
-              <a href="#" className="text-white hover:text-blue-100 transition transform hover:scale-105 relative">
-                <FaBell className="mr-1 inline" /> Alerts
-                <span className="absolute -top-1 -right-3 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center text-xs animate-ping opacity-75"></span>
-              </a>
-            </div>
             <div className="relative group">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition cursor-pointer transform hover:scale-110">
                 <FaUser className="text-white" />

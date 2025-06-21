@@ -15,6 +15,7 @@ import SettingsPage from './components/SettingsPage';
 import CreateAccount from './Authentication/CreateAccount';
 import Login from './Authentication/Login';
 import VerifyEmail from './Authentication/VerifyEmail';
+import ResetPassword from './Authentication/ResetPassword';
 import { FaBriefcase, FaFileAlt, FaCalendarAlt, FaUserCheck } from 'react-icons/fa';
 // Import Candidate Dashboard Components
 import CandidateMainContent from './components/CandidateDashboard/MainContent'; // Assuming you create a subfolder for candidate components
@@ -109,12 +110,12 @@ function App() {
         {/* Authentication Routes */}
         <Route path="/" element={
           <div className="min-h-screen">
-            <CreateAccount />
+            <Login />
           </div>
         } />
-        <Route path="/login" element={
+        <Route path="/CreateAccount" element={
           <div className="min-h-screen">
-            <Login />
+            <CreateAccount />
           </div>
         } />
         <Route path="/verify-email" element={
@@ -122,6 +123,12 @@ function App() {
             <VerifyEmail />
           </div>
         } />
+        <Route path="/reset-password" element={
+          <div className="min-h-screen">
+            <ResetPassword />
+          </div>
+        } />
+        
 
         {/* HR Dashboard Routes - Protected */}
         <Route path="/hr_dashboard" element={

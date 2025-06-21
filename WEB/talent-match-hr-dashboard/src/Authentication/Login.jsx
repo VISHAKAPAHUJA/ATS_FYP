@@ -4,7 +4,7 @@ import hiringImage from "./hiring.jpg";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    usernameOrEmail: "", // Changed from username to usernameOrEmail
     password: "",
     rememberMe: false,
   });
@@ -38,79 +38,91 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
+    e.preventDefault();
+    setError("");
 
-  if (!formData.username || !formData.password) {
-    setError("Please fill in all fields.");
-    return;
-  }
-
-  setIsLoading(true);
-
-  try {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.username,
-        password: formData.password,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Login failed");
+    if (!formData.usernameOrEmail || !formData.password) {
+      setError("Please fill in all fields.");
+      return;
     }
 
-    // Enhanced token storage
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      // Also store expiration time if available
-      if (data.expiresIn) {
-        const expiresAt = Date.now() + data.expiresIn * 1000;
-        localStorage.setItem("token_expires", expiresAt.toString());
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.usernameOrEmail.includes('@') 
+            ? formData.usernameOrEmail 
+            : undefined,
+          username: !formData.usernameOrEmail.includes('@')
+            ? formData.usernameOrEmail
+            : undefined,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
       }
-      console.log("Token stored successfully");
-    } else {
-      console.error("Login response:", data);
-      throw new Error("Authentication token not received");
-    }
 
-    // Rest of your existing redirect logic remains exactly the same
-    if (data.redirectUrl) {
-      if (data.redirectUrl.includes('http://') || data.redirectUrl.includes('https://')) {
-        const fixedUrl = data.redirectUrl.replace(/^\/+/, '');
-        window.location.href = fixedUrl;
-      } else {
-        console.log("====data====", data);
+      // Enhanced token storage
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        // Store additional user info
+        localStorage.setItem("username", data.username || "");
+        localStorage.setItem("email", data.email || "");
+        localStorage.setItem("role", data.role || "");
         
-        navigate(data.redirectUrl || "/hr_dashboard");
-      }
-    } else {
-      if (data.role === "HRManager") {
-        navigate("/hr_dashboard");
+        // Also store expiration time if available
+        if (data.expiresIn) {
+          const expiresAt = Date.now() + data.expiresIn * 1000;
+          localStorage.setItem("token_expires", expiresAt.toString());
+        }
+        console.log("Token stored successfully");
       } else {
-        window.location.href = "/candidate_dashboard";
+        console.error("Login response:", data);
+        throw new Error("Authentication token not received");
       }
+
+      // Rest of your existing redirect logic remains exactly the same
+      if (data.redirectUrl) {
+        if (data.redirectUrl.includes('http://') || data.redirectUrl.includes('https://')) {
+          const fixedUrl = data.redirectUrl.replace(/^\/+/, '');
+          window.location.href = fixedUrl;
+        } else {
+          console.log("====data====", data);
+          navigate(data.redirectUrl || "/hr_dashboard");
+        }
+      } else {
+        if (data.role === "HRManager") {
+          navigate("/hr_dashboard");
+        } else {
+          window.location.href = "/candidate_dashboard";
+        }
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError(error.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    setError(error.message || "Something went wrong. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     setIsForgotPasswordLoading(true);
 
     try {
-      const email = formData.username || prompt("Enter your email:");
+      const email = formData.usernameOrEmail.includes('@') 
+        ? formData.usernameOrEmail 
+        : prompt("Please enter your email (username recovery not supported yet):");
+      
       if (!email) return;
 
       const response = await fetch(
@@ -178,29 +190,25 @@ const Login = () => {
 
         {/* Form Container */}
         <div className="w-[55%] flex flex-col justify-center text-center pl-8">
-          {/* Updated heading sizes to match CreateAccount */}
           <h2 className="text-3xl font-semibold text-white mb-4">
             Welcome Back!
           </h2>
           <p className="text-gray-200 mb-6">Log in to continue your journey</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {" "}
-            {/* Changed space-y-4 to space-y-5 */}
-            {/* Email Field - updated to match CreateAccount */}
             <div className="text-left">
               <label
-                htmlFor="username"
+                htmlFor="usernameOrEmail"
                 className="block text-sm font-medium text-white mb-2"
               >
                 Username or Email
               </label>
               <input
                 type="text"
-                id="username"
-                name="username"
+                id="usernameOrEmail"
+                name="usernameOrEmail"
                 placeholder="Enter your username or email"
-                value={formData.username}
+                value={formData.usernameOrEmail}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 text-base bg-white bg-opacity-90 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-300 outline-none transition"
               />
@@ -222,7 +230,6 @@ const Login = () => {
                 className="w-full px-4 py-3 text-base bg-white bg-opacity-90 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-300 outline-none transition"
               />
             </div>
-            {/* REST OF THE CODE REMAINS EXACTLY THE SAME */}
             <div className="flex justify-between items-center">
               <label className="flex items-center text-sm text-white">
                 <input
@@ -269,7 +276,7 @@ const Login = () => {
           <p className="text-sm text-white mt-4">
             Don't have an account?{" "}
             <Link
-              to="/"
+              to="/CreateAccount"
               className="text-yellow-400 font-medium hover:text-yellow-500 hover:underline"
             >
               Sign up

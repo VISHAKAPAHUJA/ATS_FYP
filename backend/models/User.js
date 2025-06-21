@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken'); // Make sure to require jwt if using it
 
 const UserSchema = new mongoose.Schema({
     email: { 
@@ -8,6 +9,14 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         trim: true,
         lowercase: true
+    },
+    username: {  // New username field
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        minlength: 3,
+        maxlength: 30
     },
     password: { 
         type: String, 
@@ -25,7 +34,7 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    // For password reset (ADD THESE NEW FIELDS)
+    // For password reset
     resetPasswordCode: {
         type: String,
         default: null
@@ -56,7 +65,7 @@ UserSchema.pre('save', async function(next) {
         next(err);
     }
 });
-// new thing
+
 // Add to User.js after the pre-save hook
 UserSchema.methods.generateAuthToken = function() {
   const user = this;
@@ -67,4 +76,5 @@ UserSchema.methods.generateAuthToken = function() {
   );
   return token;
 };
+
 module.exports = mongoose.model('User', UserSchema);

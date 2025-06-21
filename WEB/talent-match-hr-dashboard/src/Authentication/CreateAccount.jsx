@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Add this import
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const CreateAccount = () => {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(""); // New state for username
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPasswordRules, setShowPasswordRules] = useState(false);
@@ -66,7 +67,7 @@ const CreateAccount = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !username) {
       showMessage("Please fill in all fields", "error");
       return;
     }
@@ -94,7 +95,7 @@ const CreateAccount = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, username }), // Added username
       });
 
       const data = await response.json();
@@ -115,9 +116,8 @@ const CreateAccount = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-black to-blue-600 p-4">
-      {/* Increased width to 1000px and adjusted padding */}
       <div className="flex w-[1000px] min-h-[650px] bg-white bg-opacity-15 backdrop-blur-lg rounded-xl shadow-2xl border-2 border-white border-opacity-20 p-8">
-        {/* Image Container - slightly wider */}
+        {/* Image Container */}
         <div className="w-[45%] flex justify-center items-center p-4 rounded-xl">
           <img
             src="poster-vector.jpg"
@@ -126,13 +126,31 @@ const CreateAccount = () => {
           />
         </div>
 
-        {/* Form Container - wider with more spacing */}
+        {/* Form Container */}
         <div className="w-[55%] flex flex-col justify-center text-center pl-8">
           <h2 className="text-3xl font-semibold text-white mb-4">
             Create your account
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+             {/* Username Field - New */}
+            <div className="text-left">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-white mb-2"
+              >
+                Username:
+              </label>
+              <input
+                type="text"
+                id="username"
+                placeholder="Choose a username"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 text-base bg-white bg-opacity-90 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-300 outline-none transition"
+              />
+            </div>
             {/* Email Field */}
             <div className="text-left">
               <label
@@ -153,7 +171,6 @@ const CreateAccount = () => {
             </div>
 
             {/* Password Field */}
-            {/* Password Field */}
             <div className="text-left">
               <label
                 htmlFor="password"
@@ -163,7 +180,7 @@ const CreateAccount = () => {
               </label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={passwordVisibility.password ? "text" : "password"}
                   id="password"
                   placeholder="Password"
                   required
@@ -171,10 +188,17 @@ const CreateAccount = () => {
                   onChange={handlePasswordChange}
                   className="w-full px-4 py-3 text-base bg-white bg-opacity-90 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-300 outline-none transition"
                 />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  onClick={() => togglePasswordVisibility("password")}
+                >
+                  {/* {passwordVisibility.password ? <FaEyeSlash /> : <FaEye />} */}
+                </button>
               </div>
             </div>
 
-            {/* Password Rules - increased spacing */}
+            {/* Password Rules */}
             {showPasswordRules && (
               <div className="text-left p-4 bg-white bg-opacity-20 rounded-lg border-l-4 border-blue-500 border-opacity-50 transition-all space-y-2">
                 <p
@@ -221,7 +245,6 @@ const CreateAccount = () => {
             )}
 
             {/* Confirm Password Field */}
-            {/* Confirm Password Field */}
             <div className="text-left">
               <label
                 htmlFor="confirm-password"
@@ -231,7 +254,7 @@ const CreateAccount = () => {
               </label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={passwordVisibility.confirmPassword ? "text" : "password"}
                   id="confirm-password"
                   placeholder="Confirm password"
                   required
@@ -239,6 +262,13 @@ const CreateAccount = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full px-4 py-3 text-base bg-white bg-opacity-90 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-300 outline-none transition"
                 />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  onClick={() => togglePasswordVisibility("confirmPassword")}
+                >
+                  {/* {passwordVisibility.confirmPassword ? <FaEyeSlash /> : <FaEye />} */}
+                </button>
               </div>
             </div>
 
@@ -255,7 +285,7 @@ const CreateAccount = () => {
               </div>
             )}
 
-            {/* Submit Button - larger */}
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
@@ -275,7 +305,7 @@ const CreateAccount = () => {
               </span>
             </button>
 
-            {/* Google Button - larger */}
+            {/* Google Button */}
             <button
               type="button"
               className="w-full py-4 px-4 bg-white bg-opacity-90 text-black rounded-lg font-medium text-base flex items-center justify-center hover:bg-opacity-100 transition"
@@ -312,7 +342,7 @@ const CreateAccount = () => {
           <p className="text-base text-white mt-4">
             Already have an account?{" "}
             <Link
-              to="/login"
+              to="/"
               className="text-yellow-400 font-medium hover:text-yellow-500 hover:underline"
             >
               Log in
